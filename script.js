@@ -2,20 +2,16 @@
 const config = {
   // Using only localStorage (no backend)
   useBackend: false,
-
+  
   // Local storage key
   localStorageKey: 'smokingCounterData',
-
+  
   // Check interval for daily reset (in milliseconds)
   dailyResetCheckInterval: 60000, // 1 minute
 };
 
-// Smoking counter application with p5.js animation
+// Smoking counter application
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize global variables for fish
-  let fish = [];
-  let globalTotalCount = 0;
-
   // Get DOM elements
   const countLabel1 = document.getElementById('countLabel1');
   const countLabel2 = document.getElementById('countLabel2');
@@ -134,19 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Save to storage (either backend or localStorage)
     await saveData();
-    
-    // Occasionally add extra random fish when smoking
-    if (Math.random() < 0.3) { // 30% chance to add an extra random fish
-      if (typeof fish !== 'undefined' && fish && typeof window !== 'undefined') {
-        fish.push({
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          speedX: (Math.random() - 0.5) * 4, // Faster movement
-          speedY: (Math.random() - 0.5) * 4, // Faster movement
-          tOffset: Math.random() * Math.PI * 2 // Time offset for animation
-        });
-      }
-    }
   }
 
   // Function to update display
@@ -314,143 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set up daily reset check interval - check every minute
   setInterval(checkDailyReset, config.dailyResetCheckInterval);
 
-  // Update global total count after loading data
-  function updateGlobalTotalCount() {
-    globalTotalCount = countBox1 + countBox2;
-  }
-  updateGlobalTotalCount();
-
   // Check for daily reset on initial load
   checkDailyReset();
-  
-  // Update total count when the counter changes
-  const originalAddSmoke = addSmoke;
-  addSmoke = function(boxNumber) {
-    originalAddSmoke(boxNumber);
-    updateGlobalTotalCount();
-  };
-
-  // Update global fish count from inside the DOM event
-  function updateGlobalTotalCount() {
-    globalTotalCount = countBox1 + countBox2;
-  }
 });
-
-// Global p5.js functions to be accessible outside the DOM event
-let fish = [];
-let globalTotalCount = 0;
-
-// p5.js setup - defining globally so p5 can find it
-function setup() {
-  const canvas = createCanvas(windowWidth, windowHeight);
-  canvas.parent('canvas-container');
-  colorMode(RGB);
-  noFill();
-  stroke(120, 209, 209); // Blue color (RGB 0, 47, 167)
-  strokeWeight(1);
-  frameRate(30);
-  
-  // Initialize fish with random positions even if total count is 0
-  // This creates a more interesting background effect
-  for (let i = 0; i < 5; i++) { // Start with a few random fish
-    fish.push({
-      x: random(width),
-      y: random(height),
-      speedX: random(-3, 3) * 2, // Faster movement
-      speedY: random(-3, 3) * 2, // Faster movement
-      tOffset: random(TWO_PI) // Time offset for animation
-    });
-  }
-}
-
-// p5.js draw - defining globally so p5 can find it
-function draw() {
-  // Draw solid black background
-  background(9);
-  
-  // Draw fish based on total count
-  drawFish();
-}
-
-function drawFish() {
-  // Randomly add new fish occasionally for more dynamic effect
-  if (frameCount % 120 === 0 && fish.length < 30) { // Add a new random fish every 2 seconds
-    if (random() < 0.7) { // 70% chance to add fish
-      fish.push({
-        x: random(width),
-        y: random(height),
-        speedX: random(-3, 3) * 2, // Faster movement
-        speedY: random(-3, 3) * 2, // Faster movement
-        tOffset: random(TWO_PI) // Time offset for animation
-      });
-    }
-  }
-  
-  // Update fish count based on total count but with random variation
-  const targetFishCount = Math.min(50, globalTotalCount + 5); // Add some baseline fish
-  while (fish.length < targetFishCount) {
-    fish.push({
-      x: random(width),
-      y: random(height),
-      speedX: random(-3, 3) * 2, // Faster movement
-      speedY: random(-3, 3) * 2, // Faster movement
-      tOffset: random(TWO_PI) // Time offset for animation
-    });
-  }
-
-  // Remove extra fish if count decreased
-  while (fish.length > targetFishCount && fish.length > 5) { // Keep at least 5 random fish
-    fish.splice(Math.floor(random(fish.length)), 1);
-  }
-
-  // Draw and update each fish using the exact original pattern
-  for (let i = 0; i < fish.length; i++) {
-    let f = fish[i];
-
-    // Update position with faster movement
-    f.x += f.speedX;
-    f.y += f.speedY;
-
-    // Bounce off edges
-    if (f.x < 0 || f.x > width) f.speedX *= -1;
-    if (f.y < 0 || f.y > height) f.speedY *= -1;
-
-    // Keep fish within bounds
-    f.x = constrain(f.x, 0, width);
-    f.y = constrain(f.y, 0, height);
-
-    // Draw each fish using the EXACT original p5 pattern at the fish's position
-    push();
-    translate(f.x, f.y);
-    stroke(120, 209, 209); // Blue color
-    noFill();
-
-    // Use the EXACT original p5 pattern from the reference code
-    let fishT = millis() / 2000 + f.tOffset; // Time for this fish's animation
-
-    for (let j = 10000; j > 0; j--) {
-      let x = j;
-      let y = j / 235.0;
-
-      let k = (4.0 + cos(y)) * cos(x / 4.0);
-      let e = y / 8.0 - 20.0;
-      let d = sqrt(k * k + e * e);
-
-      let q = sin(k * 3.0) + sin(y / 19.0 + 9.0) * k * (6.0 + sin(e * 14.0 - d));
-      let c = d - fishT; // Use fish-specific time
-
-      // Calculate position with the EXACT same formula as original
-      let px = q * cos(d / 8.0 + fishT / 4.0) + 50.0 * cos(c);
-      let py = q * sin(c) + d * 7.0 * sin(c / 4.0);
-
-      // Draw the point at the calculated position
-      point(px, py);
-    }
-
-    pop();
-  }
-}
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}

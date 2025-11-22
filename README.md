@@ -9,6 +9,7 @@
 - 自定义背景图片的确认对话框
 - 每日重置功能（计数器在午夜自动清零）
 - 使用localStorage进行本地存储（或后端数据库，用于部署）
+- p5.js动画背景，根据吸烟数量显示移动的蓝色图案
 
 ## 文件结构
 
@@ -38,80 +39,52 @@ smokecount/
 
 ### 后端部署（配合数据库）
 
+如果需要在多设备间同步数据：
+
 1. 将`server.js`部署到Vercel、Railway或其他Node.js托管平台
 2. 设置以下环境变量（二选一）：
-   - Upstash Redis（设置`UPSTASH_REDIS_URL`环境变量），或
+   - Upstash Redis（设置`UPSTASH_REDIS_URL`和`UPSTASH_REDIS_REST_TOKEN`环境变量），或
    - Neon PostgreSQL（设置`DATABASE_URL`环境变量）
-3. 将`script.js`中的`backendUrl`更新为您的部署服务器URL
-4. 将`script.js`中的`useBackend`设置为`true`
-5. 将静态文件（`index.html`，`style.css`，`script.js`，以及图片）部署到静态托管服务（如Vercel、Netlify等）
+3. 将`script.js`中的`useBackend`设置为`true`
+4. 将静态文件（`index.html`，`style.css`，`script.js`，以及图片）部署到静态托管服务（如Vercel、Netlify等）
 
-### Upstash + Vercel 部署指南
+### 部署指南
 
-1. **创建Upstash Redis数据库**：
+本应用支持两种部署方式：
+
+#### 方式一：纯静态部署（推荐）
+- 仅使用浏览器的localStorage存储数据
+- 无需后端服务器或数据库
+- 直接将所有文件部署到静态托管服务（如Vercel、Netlify等）
+- `script.js`中的`useBackend`设置为`false`（默认值）
+
+#### 方式二：后端 + 数据库部署（可选）
+如果需要数据在不同设备间同步，可选择：
+
+1. **创建Upstash Redis数据库**（可选）：
    - 访问 [Upstash Console](https://console.upstash.com/)
    - 点击"Create Database"
    - 选择Region
    - 创建数据库后复制Redis URL和REST Token
 
-2. **部署后端到Vercel**：
-   - 在Vercel仪表板中点击"New Project"
+2. **部署后端到Vercel**（可选）：
+   - 在Vercel仪表板中点击"New Project" 
    - 连接您的GitHub仓库
-   - 在环境变量中添加：
+   - 在环境变量中添加（如果使用Upstash）：
      - `UPSTASH_REDIS_URL`: 您的Upstash Redis URL
      - `UPSTASH_REDIS_REST_TOKEN`: 您的Upstash REST Token
-   - 部署项目，记下您的后端URL
+   - 部署项目
 
-3. **配置前端**：
-   - 在`script.js`中，将`config.backendUrl`设置为您的Vercel后端URL
-   - 将`config.useBackend`设置为`true`
-
-4. **部署前端到Vercel**：
-   - 在Vercel仪表板中创建新项目
-   - 连接包含静态文件的仓库
-   - 部署完成
-
-### Upstash接口配置
-
-在`script.js`中，Upstash Redis的接口函数如下：
-
-```javascript
-// 使用Upstash Redis存储数据的示例
-async function saveDataToRedis(date, count) {
-  try {
-    const response = await fetch(`${config.backendUrl}/counter`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        date: date,
-        count: count
-      })
-    });
-    
-    if (!response.ok) {
-      // 如果API失败，保存到localStorage作为备份
-      localStorage.setItem(config.localStorageKey, JSON.stringify({
-        date: date,
-        count: count
-      }));
-    }
-  } catch (error) {
-    // 如果API失败，保存到localStorage作为备份
-    localStorage.setItem(config.localStorageKey, JSON.stringify({
-      date: date,
-      count: count
-    }));
-  }
-}
-```
+3. **配置前端**（如果使用后端）：
+   - 在`script.js`中，将`useBackend`设置为`true`
+   - 将静态文件（`index.html`，`style.css`，`script.js`，以及图片）部署到静态托管服务
 
 ### 环境变量说明
 
 部署后端时，设置以下环境变量：
 
 - `UPSTASH_REDIS_URL`: 您的Upstash Redis连接URL（可选）
+- `UPSTASH_REDIS_REST_TOKEN`: 您的Upstash REST Token（可选）
 - `DATABASE_URL`: 您的Neon PostgreSQL连接URL（可选）
 - `ADMIN_PASSWORD`: 重置端点密码（可选）
 
