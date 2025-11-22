@@ -4,7 +4,7 @@ const config = {
   useBackend: false,
   
   // Backend API endpoint (if using) - update this when deploying to your backend
-  backendUrl: window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://your-deployment-url.com',
+  backendUrl: window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://smoke-counter-snowy.vercel.app/',
   
   // Local storage key
   localStorageKey: 'smokingCounterData',
