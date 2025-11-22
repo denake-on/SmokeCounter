@@ -1,5 +1,6 @@
 # 吸烟计数器
-
+![smoke](image/forReadme2.png)
+![smoke](image/forReadme.png)
 一个简单的Web应用，用于追踪每日吸烟情况，具备每日自动重置功能。
 
 ## 功能特性
