@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吸烟计数器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="smoke-boxes">
+      <div class="smoke-box-row">
+        <div class="smoke-box" id="smokeBox1">
+          <img src="image/smoke1.png" alt="烟盒 1" class="smoke-img">
+        </div>
+        <div class="count-label" id="countLabel1">0</div>
+      </div>
+
+      <div class="smoke-box-row">
+        <div class="smoke-box" id="smokeBox2">
+          <img src="image/smoke2.png" alt="烟盒 2" class="smoke-img">
+        </div>
+        <div class="count-label" id="countLabel2">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialogs for confirmation -->
+  <div class="dialog-overlay" id="dialogOverlay"></div>
+
+  <img src="image/check2.jpg" alt="确认背景" class="dialog-bg" id="dialog1">
+  <div class="dialog-content" id="dialogContent1">
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+  </div>
+  <div class="dialog-buttons" id="dialogButtons1">
+    <button class="btn btn-yes" id="yesBtn1">Yes</button>
+    <button class="btn btn-no" id="noBtn1">No</button>
+  </div>
+
+  <img src="image/check1.jpg" alt="确认背景" class="dialog-bg" id="dialog2">
+  <div class="dialog-content" id="dialogContent2">
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+    <p>Are you sure to smoke?</p>
+  </div>
+  <div class="dialog-buttons" id="dialogButtons2">
+    <button class="btn btn-yes" id="yesBtn2">Yes</button>
+    <button class="btn btn-no" id="noBtn2">No</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
