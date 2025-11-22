@@ -1,14 +1,11 @@
 // Configuration for the smoking counter app
 const config = {
-  // Set to true if using backend database, false for localStorage
+  // Using only localStorage (no backend)
   useBackend: false,
-  
-  // Backend API endpoint (if using) - update this when deploying to your backend
-  backendUrl: window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://smoke-counter-snowy.vercel.app/',
-  
+
   // Local storage key
   localStorageKey: 'smokingCounterData',
-  
+
   // Check interval for daily reset (in milliseconds)
   dailyResetCheckInterval: 60000, // 1 minute
 };
